@@ -1,14 +1,11 @@
-import pandas as pd
 import random
 import string
 
 class DatasetCreater:
-    # Initialize the length of the stream to be generated
     def __init__(self, length) -> None:
         self.length = length
         
-    # Create a numerical dataset with certain frequency distribution
-    def create_numerical_dataset(self):
+    def create_numerical_workload(self):
         frequncy = random.randint(0, 100)
         stream = []
         for i in range(self.length//frequncy):
@@ -20,8 +17,7 @@ class DatasetCreater:
         random.shuffle(stream)
         self.write_to_csv(stream)  
 
-    # Create a dataset of ascii characters
-    def create_ascii_dataset(self):
+    def create_ascii_workload(self):
         stream = []
         alphabet = string.ascii_lowercase 
         for i in range(self.length):
@@ -30,12 +26,10 @@ class DatasetCreater:
         random.shuffle(stream)
         self.write_to_csv(stream) 
 
-    # Write the generated stream to a csv file
     def write_to_csv(self, stream):
-        output_df = pd.DataFrame(columns=['item'])
-        for item in stream:
-            output_df = output_df.append({'item' : item}, ignore_index=True)
-        output_df.to_csv('Dataset.csv', index=False)
+        with open("./Workload/workload.txt", "w") as file:
+            for item in stream:
+                file.write(str(item) + "\n")
 
 creater = DatasetCreater(10000)
-creater.create_ascii_dataset()
+creater.create_numerical_workload()
