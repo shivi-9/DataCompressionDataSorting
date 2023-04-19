@@ -79,7 +79,7 @@ void huffmanEncode(int* data, int size) {
 }
 
 int main() {
-    ifstream infile("./Workload/workload.dat", ios::binary);
+    ifstream infile("/Users/shivangidhiman/Desktop/Spring 23/CS 561 (DSA)/Final Project/DataCompressionDataSorting/Workload/workload.dat", ios::binary);
     infile.seekg(0, ios::end);
     int size = infile.tellg() / sizeof(int);
     infile.seekg(0, ios::beg);
@@ -89,7 +89,6 @@ int main() {
     infile.close();
 
     huffmanEncode(data, size);
-
     delete[] data;
     return 0;
 }
