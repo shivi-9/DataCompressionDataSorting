@@ -76,6 +76,9 @@
         "*.tcc": "cpp",
         "functional": "cpp",
         "iterator": "cpp",
-        "utility": "cpp"
+        "utility": "cpp",
+        "hash_map": "cpp",
+        "list": "cpp",
+        "memory_resource": "cpp"
     }
 }

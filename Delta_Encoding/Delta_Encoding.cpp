@@ -7,6 +7,7 @@
 #include <functional>
 #include <chrono>
 #include <utility>
+#include <iterator>
 
 using namespace std;
 
@@ -23,7 +24,7 @@ std::vector<int> delta_encoding(std::vector<int> arr){
 }
 
 int main(){
-    ifstream infile("./workload.txt", ios::binary);
+    ifstream infile("./Workload/workload100k.txt", ios::binary);
     std::vector<int> data;
     
     int element;
@@ -40,10 +41,14 @@ int main(){
     std::cout << "Time taken to perform Delta Encoding = " << point_query_time_f << " microseconds" << endl;
 
 
-    std::ofstream output_file("./encoded_data_delta.txt");
+    std::ofstream output_file("./Delta_Encoding/encoded_data_delta_100k.txt");
 
+    // declare the output iterator before creating the ofstream object
     std::ostream_iterator<int> output_iterator(output_file, "\n");
+
+    // pass the output iterator to the std::copy function
     std::copy(std::begin(encoded_data), std::end(encoded_data), output_iterator);
+
     output_file.close();
     return 0;
 }

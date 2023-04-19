@@ -2,8 +2,10 @@
 #include <fstream>
 #include <queue>
 #include <unordered_map>
+#include <chrono>
 
 using namespace std;
+using namespace chrono;
 
 // Structure for nodes of Huffman tree
 struct Node {
@@ -83,18 +85,26 @@ string decodeData(const string& encodedData, Node* root) {
 
 int main() {
     // Read encoded data from file
-    ifstream encodedFile("./HuffmanEncoding/workload_encoded.dat", ios::binary);
+    ifstream encodedFile("./HuffmanEncoding/encoded_data_huffman_100k.txt", ios::binary);
     string encodedData((istreambuf_iterator<char>(encodedFile)), istreambuf_iterator<char>());
     encodedFile.close();
 
     // Build Huffman tree
+    auto start = high_resolution_clock::now();
     Node* root = buildHuffmanTree(encodedData);
+    // auto end = high_resolution_clock::now();
+    // auto duration = duration_cast<microseconds>(end - start);
+    // cout << "Time taken for building Huffman tree: " << duration.count() << " microseconds" << endl;
 
-    // Decode data
+    // // Decode data
+    // start = high_resolution_clock::now();
     string decodedData = decodeData(encodedData, root);
+    auto end = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(end - start);
+    cout << "Time taken for decoding: " << duration.count() << " microseconds" << endl;
 
     // Write decoded data to file
-    ofstream decodedFile("./HuffmanEncoding/workload_decoded.dat", ios::binary);
+    ofstream decodedFile("./HuffmanEncoding/decoded_data_huffman_100k.txt", ios::binary);
     decodedFile.write(decodedData.c_str(), decodedData.size());
     decodedFile.close();
 

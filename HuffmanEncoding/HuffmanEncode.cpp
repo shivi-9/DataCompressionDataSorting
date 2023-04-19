@@ -1,95 +1,107 @@
 #include <iostream>
 #include <fstream>
 #include <queue>
-#include <vector>
 #include <unordered_map>
+#include <chrono>
+#include <functional>
+
 using namespace std;
+using namespace std::chrono;
 
-struct Node {
+struct HuffmanNode {
+    char data;
     int freq;
-    int val;
-    Node* left;
-    Node* right;
+    HuffmanNode *left, *right;
 
-    Node(int freq, int val) {
+    HuffmanNode(char data, int freq) {
+        this->data = data;
         this->freq = freq;
-        this->val = val;
         left = right = nullptr;
-    }
-
-    Node(int freq, int val, Node* left, Node* right) {
-        this->freq = freq;
-        this->val = val;
-        this->left = left;
-        this->right = right;
-    }
-
-    bool isLeaf() const {
-        return (left == nullptr && right == nullptr);
     }
 };
 
 struct CompareNodes {
-    bool operator()(const Node* lhs, const Node* rhs) const {
-        return lhs->freq > rhs->freq;
+    bool operator()(HuffmanNode* a, HuffmanNode* b) {
+        return a->freq > b->freq;
     }
 };
 
-void generateCodes(Node* root, string code, unordered_map<int, string>& codes) {
-    if (root == nullptr) return;
-
-    if (root->isLeaf()) {
-        codes[root->val] = code;
-    } else {
-        generateCodes(root->left, code + "0", codes);
-        generateCodes(root->right, code + "1", codes);
+void encodeFile(string inputFile, string outputFile) {
+    // Step 1: read input file and count frequencies of characters
+    unordered_map<char, int> freqMap;
+    ifstream input(inputFile);
+    char ch;
+    while (input.get(ch)) {
+        freqMap[ch]++;
     }
-}
+    input.close();
 
-void huffmanEncode(int* data, int size) {
-    unordered_map<int, int> freqMap;
-    for (int i = 0; i < size; i++) {
-        freqMap[data[i]]++;
-    }
-
-    priority_queue<Node*, vector<Node*>, CompareNodes> pq;
+    // Step 2: build Huffman tree from frequency map using Vitter's algorithm
+    priority_queue<HuffmanNode*, vector<HuffmanNode*>, CompareNodes> minHeap;
     for (auto& p : freqMap) {
-        pq.push(new Node(p.second, p.first));
+        minHeap.push(new HuffmanNode(p.first, p.second));
     }
 
-    while (pq.size() > 1) {
-        Node* left = pq.top();
-        pq.pop();
-        Node* right = pq.top();
-        pq.pop();
-        pq.push(new Node(left->freq + right->freq, -1, left, right));
-    }
+    while (minHeap.size() > 1) {
+        // take two smallest nodes
+        HuffmanNode* left = minHeap.top(); minHeap.pop();
+        HuffmanNode* right = minHeap.top(); minHeap.pop();
 
-    unordered_map<int, string> codes;
-    generateCodes(pq.top(), "", codes);
+        // create a new node as a parent of the two smallest nodes
+        HuffmanNode* parent = new HuffmanNode('$', left->freq + right->freq);
+        parent->left = left;
+        parent->right = right;
 
-    ofstream outfile("./HuffmanEncoding/workload_encoded.dat", ios::binary);
-    for (int i = 0; i < size; i++) {
-        string code = codes[data[i]];
-        for (char c : code) {
-            outfile.write(&c, sizeof(char));
+        // determine the optimal rank of the parent node
+        int rank = 0;
+        if (left->freq < right->freq) {
+            swap(left, right);
         }
+        while ((1 << rank) <= minHeap.size()) {
+            HuffmanNode* node = minHeap.top();
+            if (node->freq < parent->freq) {
+                break;
+            }
+            minHeap.pop();
+            if (left == node) {
+                swap(left, right);
+            }
+            HuffmanNode* grandparent = new HuffmanNode('$', parent->freq + node->freq);
+            grandparent->left = parent;
+            grandparent->right = node;
+            parent = grandparent;
+            rank++;
+        }
+
+        // insert the parent node at the optimal rank
+        minHeap.push(parent);
     }
-    outfile.close();
+
+    // Step 3: build codebook from Huffman tree
+    unordered_map<char, string> codebook;
+    function<void(HuffmanNode*, string)> buildCodebook = [&](HuffmanNode* node, string code) {
+        if (!node) return;
+        if (node->data != '$') codebook[node->data] = code;
+        buildCodebook(node->left, code + "0");
+        buildCodebook(node->right, code + "1");
+    };
+    buildCodebook(minHeap.top(), "");
+
+    // Step 4: encode input file using codebook
+    ofstream output(outputFile);
+    input.open(inputFile);
+    while (input.get(ch)) {
+        output << codebook[ch];
+    }
+    input.close();
+    output.close();
 }
 
 int main() {
-    ifstream infile("./Workload/workload.dat", ios::binary);
-    infile.seekg(0, ios::end);
-    int size = infile.tellg() / sizeof(int);
-    infile.seekg(0, ios::beg);
-
-    int* data = new int[size];
-    infile.read((char*)data, size * sizeof(int));
-    infile.close();
-
-    huffmanEncode(data, size);
-
-    delete[] data;
+    auto start = high_resolution_clock::now();
+    encodeFile("./Workload/workload100k.txt", "./HuffmanEncoding/encoded_data.huffman_100k.txt");
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(stop - start);
+    cout << "Encoding took " << duration.count() << " microseconds.\n";
     return 0;
 }

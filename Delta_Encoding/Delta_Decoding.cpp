@@ -7,6 +7,8 @@
 #include <functional>
 #include <chrono>
 #include <utility>
+#include <iterator>
+
 using namespace std;
 
 
@@ -22,7 +24,7 @@ std::vector<int> delta_decoding(std::vector<int> arr){
 }
 
 int main(){
-    ifstream infile("./encoded_data_delta.txt", ios::binary);
+    ifstream infile("./Delta_Encoding/encoded_data_delta_100k.txt", ios::binary);
     std::vector<int> data;
     
     int element;
@@ -30,12 +32,25 @@ int main(){
     {
         data.push_back(element);
     }
+    infile.close();
+
+    // Record start time
+    auto start_time = std::chrono::high_resolution_clock::now();
+    
     std::vector<int>encoded_data = delta_decoding(data);
 
-    std::ofstream output_file("./decoded_data_delta.txt");
+    // Record end time
+    auto end_time = std::chrono::high_resolution_clock::now();
+    
+    // Calculate elapsed time in microseconds
+    auto elapsed_time = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count();
+
+    std::ofstream output_file("./Delta_Encoding/decoded_data_delta_100k.txt");
 
     std::ostream_iterator<int> output_iterator(output_file, "\n");
     std::copy(std::begin(encoded_data), std::end(encoded_data), output_iterator);
     output_file.close();
+
+    std::cout << "Decoding time: " << elapsed_time << " microseconds" << std::endl;
     return 0;
 }
