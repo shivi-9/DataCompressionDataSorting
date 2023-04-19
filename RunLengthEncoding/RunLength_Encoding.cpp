@@ -43,7 +43,15 @@ int main(){
     {
         data.push_back(element);
     }
-    std::vector<int>encoded_data = runLengthEncode_freq(data);
+
+    auto start_pq_f = std::chrono::high_resolution_clock::now();
+     std::vector<int>encoded_data = runLengthEncode_freq(data);
+    auto stop_pq_f = std::chrono::high_resolution_clock::now();
+    auto duration_pq_f = std::chrono::duration_cast<std::chrono::microseconds>(stop_pq_f - start_pq_f);
+    unsigned long long point_query_time_f = duration_pq_f.count();
+    std::cout << "Time taken to perform runLengthEncode = " << point_query_time_f << " microseconds" << endl;
+
+   
 
     std::ofstream output_file("./encoded_data.txt");
 
