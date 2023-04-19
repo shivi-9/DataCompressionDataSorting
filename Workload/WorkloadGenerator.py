@@ -1,35 +1,44 @@
 import random
 import string
 
-class DatasetCreater:
-    def __init__(self, length) -> None:
-        self.length = length
-        
-    def create_numerical_workload(self):
-        frequncy = random.randint(0, 100)
-        stream = []
-        for i in range(self.length//frequncy):
-            for j in range(frequncy):
-                stream.append(i)
-        if(len(stream) < self.length):
-            for i in range(len(stream), self.length):
-                stream.append(random.randint(0, 100))
-        random.shuffle(stream)
-        self.write_to_csv(stream)  
+def workload_generator(n, k, l):
+    unique = int(n * 0.1)
+    duplicate = int(n * 0.9)
+    max_freq = duplicate/unique
+    data = []
 
-    def create_ascii_workload(self):
-        stream = []
-        alphabet = string.ascii_lowercase 
-        for i in range(self.length):
-            f = random.randint(0, len(alphabet)-1)
-            stream.append(alphabet[f])
-        random.shuffle(stream)
-        self.write_to_csv(stream) 
+    for i in range(unique):
+        data.append(i)
 
-    def write_to_csv(self, stream):
-        with open("./Workload/workload.txt", "w") as file:
-            for item in stream:
-                file.write(str(item) + "\n")
+    for i in range(unique):
+        num = random.randint(0, unique)
+        freq = random.randint(0, max_freq)
+        data.extend([num] * freq)
 
-creater = DatasetCreater(10000)
-creater.create_numerical_workload()
+    if(len(data) != n):
+        empty_slots = n - len(data)
+        for i in range(empty_slots):
+            data.append(random.randint(0, unique))
+
+    data = sorted(data)
+
+    # k is number of out of order entries
+    # l is max displacement of out of order entries
+
+    while k != 0:
+        index = random.randint(0, n)
+        displ = -1
+        if index - l < 0:
+            displ = index + l
+        else:
+            displ = index - l
+
+        temp = data.pop(index)
+        data.insert(displ, temp)
+        k -= 1
+    
+    with open('./Workload/workload.txt', 'w') as f:
+        for item in data:
+            f.write("%s\n" % item)
+
+workload_generator(1000000, 5000, 5000)
