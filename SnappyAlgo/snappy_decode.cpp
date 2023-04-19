@@ -15,7 +15,7 @@ int main() {
     auto start = std::chrono::high_resolution_clock::now();
     snappy::Uncompress(encoded.data(), encoded.size(), &decoded);
     auto end = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+    auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
 
     // Save decoded data to file
     std::ofstream output("./SnappyAlgo/decoded.txt", std::ios::binary);
@@ -23,7 +23,7 @@ int main() {
     output.close();
 
     // Print duration
-    std::cout << "Decoding took " << duration.count() << " microseconds." << std::endl;
+    std::cout << "Decoding took " << duration.count() << " nanoseconds." << std::endl;
 
     return 0;
 }

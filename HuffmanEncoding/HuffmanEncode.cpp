@@ -1,107 +1,94 @@
-#include <iostream>
-#include <fstream>
-#include <queue>
-#include <unordered_map>
-#include <chrono>
-#include <functional>
+#include <bits/stdc++.h>
 
 using namespace std;
-using namespace std::chrono;
-
-struct HuffmanNode {
+ 
+struct MinHeapNode {
     char data;
-    int freq;
-    HuffmanNode *left, *right;
-
-    HuffmanNode(char data, int freq) {
+    unsigned freq;
+    MinHeapNode *left, *right;
+    MinHeapNode(char data, unsigned freq)
+    {
+        left = right = NULL;
         this->data = data;
         this->freq = freq;
-        left = right = nullptr;
     }
 };
-
-struct CompareNodes {
-    bool operator()(HuffmanNode* a, HuffmanNode* b) {
-        return a->freq > b->freq;
+ 
+struct compare {
+ 
+    bool operator()(MinHeapNode* l, MinHeapNode* r)
+    {
+        return (l->freq > r->freq);
     }
 };
-
-void encodeFile(string inputFile, string outputFile) {
-    // Step 1: read input file and count frequencies of characters
-    unordered_map<char, int> freqMap;
-    ifstream input(inputFile);
-    char ch;
-    while (input.get(ch)) {
-        freqMap[ch]++;
-    }
-    input.close();
-
-    // Step 2: build Huffman tree from frequency map using Vitter's algorithm
-    priority_queue<HuffmanNode*, vector<HuffmanNode*>, CompareNodes> minHeap;
-    for (auto& p : freqMap) {
-        minHeap.push(new HuffmanNode(p.first, p.second));
-    }
-
-    while (minHeap.size() > 1) {
-        // take two smallest nodes
-        HuffmanNode* left = minHeap.top(); minHeap.pop();
-        HuffmanNode* right = minHeap.top(); minHeap.pop();
-
-        // create a new node as a parent of the two smallest nodes
-        HuffmanNode* parent = new HuffmanNode('$', left->freq + right->freq);
-        parent->left = left;
-        parent->right = right;
-
-        // determine the optimal rank of the parent node
-        int rank = 0;
-        if (left->freq < right->freq) {
-            swap(left, right);
-        }
-        while ((1 << rank) <= minHeap.size()) {
-            HuffmanNode* node = minHeap.top();
-            if (node->freq < parent->freq) {
-                break;
-            }
-            minHeap.pop();
-            if (left == node) {
-                swap(left, right);
-            }
-            HuffmanNode* grandparent = new HuffmanNode('$', parent->freq + node->freq);
-            grandparent->left = parent;
-            grandparent->right = node;
-            parent = grandparent;
-            rank++;
-        }
-
-        // insert the parent node at the optimal rank
-        minHeap.push(parent);
-    }
-
-    // Step 3: build codebook from Huffman tree
-    unordered_map<char, string> codebook;
-    function<void(HuffmanNode*, string)> buildCodebook = [&](HuffmanNode* node, string code) {
-        if (!node) return;
-        if (node->data != '$') codebook[node->data] = code;
-        buildCodebook(node->left, code + "0");
-        buildCodebook(node->right, code + "1");
-    };
-    buildCodebook(minHeap.top(), "");
-
-    // Step 4: encode input file using codebook
-    ofstream output(outputFile);
-    input.open(inputFile);
-    while (input.get(ch)) {
-        output << codebook[ch];
-    }
-    input.close();
-    output.close();
+ 
+void printCodes(struct MinHeapNode* root, string str)
+{
+ 
+    if (!root)
+        return;
+ 
+    if (root->data != '$')
+        cout << root->data << ": " << str << "\n";
+ 
+    printCodes(root->left, str + "0");
+    printCodes(root->right, str + "1");
 }
-
-int main() {
-    auto start = high_resolution_clock::now();
-    encodeFile("./Workload/workload100k.txt", "./HuffmanEncoding/encoded_data.huffman_100k.txt");
-    auto stop = high_resolution_clock::now();
-    auto duration = duration_cast<microseconds>(stop - start);
-    cout << "Encoding took " << duration.count() << " microseconds.\n";
+ 
+void HuffmanCodes(char data[], int freq[], int size)
+{
+    struct MinHeapNode *left, *right, *top;
+ 
+    // Create a min heap & inserts all characters of data[]
+    priority_queue<MinHeapNode*, vector<MinHeapNode*>, compare>minHeap;
+ 
+    for (int i = 0; i < size; ++i)
+        minHeap.push(new MinHeapNode(data[i], freq[i]));
+ 
+    // Iterate while size of heap doesn't become 1
+    while (minHeap.size() != 1) {
+ 
+        // Extract the two minimum
+        // freq items from min heap
+        left = minHeap.top();
+        minHeap.pop();
+ 
+        right = minHeap.top();
+        minHeap.pop();
+ 
+        // Create a new internal node with
+        // frequency equal to the sum of the
+        // two nodes frequencies. Make the
+        // two extracted node as left and right children
+        // of this new node. Add this node
+        // to the min heap '$' is a special value
+        // for internal nodes, not used
+        top = new MinHeapNode('$',
+                              left->freq + right->freq);
+ 
+        top->left = left;
+        top->right = right;
+ 
+        minHeap.push(top);
+    }
+ 
+    // Print Huffman codes using
+    // the Huffman tree built above
+    printCodes(minHeap.top(), "");
+}
+ 
+// Driver Code
+int main()
+{
+ 
+    char arr[] = { 'a', 'b', 'c', 'd', 'e', 'f' };
+    int freq[] = { 5, 9, 12, 13, 16, 45 };
+ 
+    int size = sizeof(arr) / sizeof(arr[0]);
+ 
+    HuffmanCodes(arr, freq, size);
+ 
     return 0;
 }
+ 
+// This code is contributed by Aditya Goel
