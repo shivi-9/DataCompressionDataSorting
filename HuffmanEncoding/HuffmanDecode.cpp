@@ -1,22 +1,16 @@
 #include <iostream>
 #include <fstream>
-#include <queue>
-#include <unordered_map>
 #include <chrono>
+#include <unordered_map>
 
 using namespace std;
-using namespace chrono;
 
-// Structure for nodes of Huffman tree
 struct Node {
     char data;
-    int freq;
-    Node* left;
-    Node* right;
+    Node *left, *right;
 
-    Node(char data, int freq) {
+    Node(char data) {
         this->data = data;
-        this->freq = freq;
         left = right = nullptr;
     }
 
@@ -26,90 +20,113 @@ struct Node {
     }
 };
 
-// Comparator for priority queue
-struct comp {
-    bool operator()(Node* l, Node* r) {
-        return l->freq > r->freq;
+Node* buildHuffmanTree(unordered_map<char, string> codes) {
+    // cout << "Check4";
+    Node* root = new Node('$');
+    for (auto it = codes.begin(); it != codes.end(); it++) {
+        // cout << "Check5";
+        Node* current = root;
+        string code = it->second;
+        for (int i = 0; i < code.length(); i++) {
+            // cout << "Check5";
+            if (code[i] == '0') {
+                if (current->left == nullptr) {
+                    current->left = new Node('$');
+                }
+                current = current->left;
+            } else {
+                if (current->right == nullptr) {
+                    current->right = new Node('$');
+                }
+                current = current->right;
+            }
+        }
+        current->data = it->first;
     }
-};
-
-// Build Huffman tree and return the root node
-Node* buildHuffmanTree(const string& data) {
-    unordered_map<char, int> freqMap;
-    for (char c : data) {
-        freqMap[c]++;
-    }
-
-    priority_queue<Node*, vector<Node*>, comp> pq;
-    for (auto& p : freqMap) {
-        pq.push(new Node(p.first, p.second));
-    }
-
-    while (pq.size() != 1) {
-        Node* left = pq.top();
-        pq.pop();
-
-        Node* right = pq.top();
-        pq.pop();
-
-        Node* newNode = new Node('\0', left->freq + right->freq);
-        newNode->left = left;
-        newNode->right = right;
-
-        pq.push(newNode);
-    }
-
-    return pq.top();
+    cout << "Check6\n";
+    return root;
 }
 
-// Traverse Huffman tree to decode the encoded data
-string decodeData(const string& encodedData, Node* root) {
-    string decodedData = "";
-    Node* curr = root;
-    for (char c : encodedData) {
-        if (c == '0') {
-            curr = curr->left;
-        }
-        else {
-            curr = curr->right;
-        }
+void decodeFile(string inputFilename, string outputFilename, Node* root) {
+    cout << "Check8";
+    cout << "Check8";
+    cout << "Check8";
+    auto start = chrono::high_resolution_clock::now();
 
-        if (curr->left == nullptr && curr->right == nullptr) {
-            decodedData += curr->data;
-            curr = root;
+    ifstream input(inputFilename, ios::binary);
+    ofstream output(outputFilename);
+
+    // Read the number of codes from the input file
+    int numCodes;
+    input >> numCodes;
+
+    // Read the Huffman codes from the input file
+    unordered_map<string, char> codes;
+    for (int i = 0; i < numCodes; i++) {
+        cout << "Check9";
+        char c;
+        string code;
+        input >> c >> code;
+        codes[code] = c;
+    }
+
+    // Decode the data and write it to the output file
+    Node* current = root;
+    char c;
+    while (input.get(c)) {
+        cout << "Check10";
+        for (int i = 7; i >= 0; i--) {
+            cout << "Check11";
+            if (c & (1 << i)) {
+                current = current->right;
+            } else {
+                current = current->left;
+            }
+            if (current->data != '$') {
+                output << current->data;
+                current = root;
+            }
         }
     }
 
-    return decodedData;
+    input.close();
+    output.close();
+    cout << "Check12";
+
+    auto end = chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
+    cout << "Decompression time: " << duration.count() << " nanoseconds." << endl;
 }
+
 
 int main() {
-    // Read encoded data from file
-    ifstream encodedFile("./HuffmanEncoding/encoded_data_huffman_100k.txt", ios::binary);
-    string encodedData((istreambuf_iterator<char>(encodedFile)), istreambuf_iterator<char>());
-    encodedFile.close();
+    //  cout << "Check1\n";
+    // Read the Huffman codes from the encoded data file
+   
 
-    // Build Huffman tree
-    auto start = high_resolution_clock::now();
-    Node* root = buildHuffmanTree(encodedData);
-    // auto end = high_resolution_clock::now();
-    // auto duration = duration_cast<microseconds>(end - start);
-    // cout << "Time taken for building Huffman tree: " << duration.count() << " microseconds" << endl;
+    ifstream input("./HuffmanEncoding/encoded_data_huffman.txt", ios::binary);
+    int numCodes;
+    input >> numCodes;
+    unordered_map<char, string> codes;
 
-    // // Decode data
-    // start = high_resolution_clock::now();
-    string decodedData = decodeData(encodedData, root);
-    auto end = high_resolution_clock::now();
-    auto duration = duration_cast<microseconds>(end - start);
-    cout << "Time taken for decoding: " << duration.count() << " microseconds" << endl;
+    // cout << "Check1\n";
 
-    // Write decoded data to file
-    ofstream decodedFile("./HuffmanEncoding/decoded_data_huffman_100k.txt", ios::binary);
-    decodedFile.write(decodedData.c_str(), decodedData.size());
-    decodedFile.close();
+    for (int i = 0; i < numCodes; i++) {
+        // cout << "Check2\n";
+        char c;
+        string code;
+        input >> c >> code;
+        codes[c] = code;
+    }
+    input.close();
 
-    // Free memory
-    delete root;
+    // cout << "Check3\n";
+    // Build the Huffman tree from the codes
+    Node* root = buildHuffmanTree(codes);
+    cout << "Check7\n";
+
+    // Decode the encoded data and save it to a text file
+    decodeFile("./HuffmanEncoding/encoded_data_huffman.txt", "./HuffmanEncoding/decoded_data_huffman.txt", root);
 
     return 0;
 }

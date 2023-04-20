@@ -1,94 +1,131 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <fstream>
+#include <chrono>
+#include <queue>
+#include <unordered_map>
+#include <bitset>
 
 using namespace std;
- 
-struct MinHeapNode {
+
+struct Node {
     char data;
-    unsigned freq;
-    MinHeapNode *left, *right;
-    MinHeapNode(char data, unsigned freq)
-    {
-        left = right = NULL;
+    int freq;
+    Node *left, *right;
+
+    Node(char data, int freq) {
         this->data = data;
         this->freq = freq;
+        left = right = nullptr;
+    }
+
+    ~Node() {
+        delete left;
+        delete right;
     }
 };
- 
-struct compare {
- 
-    bool operator()(MinHeapNode* l, MinHeapNode* r)
-    {
-        return (l->freq > r->freq);
+
+struct Compare {
+    bool operator()(Node* left, Node* right) {
+        return left->freq > right->freq;
     }
 };
- 
-void printCodes(struct MinHeapNode* root, string str)
-{
- 
-    if (!root)
+
+unordered_map<char, int> getFrequencies(string filename) {
+    unordered_map<char, int> freq;
+
+    ifstream input(filename, ios::binary);
+    char c;
+
+    while (input.get(c)) {
+        freq[c]++;
+    }
+
+    input.close();
+
+    return freq;
+}
+
+Node* buildHuffmanTree(unordered_map<char, int> freq) {
+    priority_queue<Node*, vector<Node*>, Compare> pq;
+
+    for (auto it = freq.begin(); it != freq.end(); it++) {
+        pq.push(new Node(it->first, it->second));
+    }
+
+    while (pq.size() != 1) {
+        Node* left = pq.top();
+        pq.pop();
+
+        Node* right = pq.top();
+        pq.pop();
+
+        Node* node = new Node('$', left->freq + right->freq);
+        node->left = left;
+        node->right = right;
+
+        pq.push(node);
+    }
+
+    return pq.top();
+}
+
+void getCodes(Node* root, string code, unordered_map<char, string>& codes) {
+    if (root == nullptr) {
         return;
- 
-    if (root->data != '$')
-        cout << root->data << ": " << str << "\n";
- 
-    printCodes(root->left, str + "0");
-    printCodes(root->right, str + "1");
-}
- 
-void HuffmanCodes(char data[], int freq[], int size)
-{
-    struct MinHeapNode *left, *right, *top;
- 
-    // Create a min heap & inserts all characters of data[]
-    priority_queue<MinHeapNode*, vector<MinHeapNode*>, compare>minHeap;
- 
-    for (int i = 0; i < size; ++i)
-        minHeap.push(new MinHeapNode(data[i], freq[i]));
- 
-    // Iterate while size of heap doesn't become 1
-    while (minHeap.size() != 1) {
- 
-        // Extract the two minimum
-        // freq items from min heap
-        left = minHeap.top();
-        minHeap.pop();
- 
-        right = minHeap.top();
-        minHeap.pop();
- 
-        // Create a new internal node with
-        // frequency equal to the sum of the
-        // two nodes frequencies. Make the
-        // two extracted node as left and right children
-        // of this new node. Add this node
-        // to the min heap '$' is a special value
-        // for internal nodes, not used
-        top = new MinHeapNode('$',
-                              left->freq + right->freq);
- 
-        top->left = left;
-        top->right = right;
- 
-        minHeap.push(top);
     }
- 
-    // Print Huffman codes using
-    // the Huffman tree built above
-    printCodes(minHeap.top(), "");
+
+    if (root->data != '$') {
+        codes[root->data] = code;
+    }
+
+    getCodes(root->left, code + "0", codes);
+    getCodes(root->right, code + "1", codes);
 }
- 
-// Driver Code
-int main()
-{
- 
-    char arr[] = { 'a', 'b', 'c', 'd', 'e', 'f' };
-    int freq[] = { 5, 9, 12, 13, 16, 45 };
- 
-    int size = sizeof(arr) / sizeof(arr[0]);
- 
-    HuffmanCodes(arr, freq, size);
- 
+
+void compressFile(string inputFilename, string outputFilename) {
+    auto start = chrono::high_resolution_clock::now();
+
+    unordered_map<char, int> freq = getFrequencies(inputFilename);
+    Node* root = buildHuffmanTree(freq);
+    unordered_map<char, string> codes;
+    getCodes(root, "", codes);
+
+    ofstream output(outputFilename, ios::binary);
+
+    // Write the Huffman tree to the compressed file
+    output << codes.size() << "\n";
+    for (auto it = codes.begin(); it != codes.end(); it++) {
+        output << it->first << " " << it->second << "\n";
+    }
+
+    // Write the compressed data to the compressed file
+    ifstream input(inputFilename, ios::binary);
+    char c;
+    string code;
+    while (input.get(c)) {
+        code += codes[c];
+        while (code.length() >= 8) {
+            bitset<8> b(code.substr(0, 8));
+            output.put((char) b.to_ulong());
+            code = code.substr(8);
+        }
+    }
+
+    // Write the last byte to the compressed file
+    if (code.length() > 0) {
+        bitset<8> b(code);
+        output.put((char) b.to_ulong());
+    }
+
+    input.close();
+    output.close();
+
+    auto end = chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
+    cout << "Compression time: " << duration.count() << " nanoseconds." << endl;
+}
+
+int main() {
+    compressFile("./Workload/workload100k.txt", "./HuffmanEncoding/encoded_data_huffman.txt");
     return 0;
 }
- 
-// This code is contributed by Aditya Goel
