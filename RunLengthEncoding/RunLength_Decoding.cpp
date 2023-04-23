@@ -7,8 +7,7 @@
 #include <functional>
 #include <chrono>
 #include <utility>
-#include <iterator>
-
+#include <sstream>
 using namespace std;
 
 
@@ -17,8 +16,8 @@ std::vector<int> runLengthdecode_freq(std::vector<int> input) {
     std::vector<int> output;
 
     for (int i = 0; i < input.size(); i=i+2) {
-        int size = input[i]; 
-        int value = input[i+1];
+        int size = input[i+1]; 
+        int value = input[i];
         for (int j = 0; j < size; j++) {
             output.push_back(value) ;
         }
@@ -27,26 +26,39 @@ std::vector<int> runLengthdecode_freq(std::vector<int> input) {
 }
 
 int main(){
-    ifstream infile("./RunLengthEncoding/encoded_data_rle_100k.txt", ios::binary);
-    std::vector<int> data;
-    
-    int element;
+    ifstream infile("./encoded_data.txt", ios::binary);
+    std::vector<string> data;
+    std::vector<int> data_int;
+    string element;
     while (infile >> element)
     {
         data.push_back(element);
     }
+    for(int i=0; i<data.size(); i++){
 
-    auto start_time = std::chrono::high_resolution_clock::now(); // start measuring time
-    std::vector<int> encoded_data = runLengthdecode_freq(data);
-    auto end_time = std::chrono::high_resolution_clock::now(); // stop measuring time
+        std::stringstream ss(data[i]);
+        string str; 
 
-    auto elapsed_time = std::chrono::duration_cast<std::chrono::microseconds>(end_time - start_time).count(); // calculate elapsed time in microseconds
+    // Use while loop to check the getline() function condition.  
+        while (getline(ss, str, ',')) 
+            // `str` is used to store the token string while ' ' whitespace is used as the delimiter.
+            data_int.push_back(stoi(str));
+        if(data_int.size()%2!=0)
+            data_int.push_back(1);    
+        
+    }
+    
+    auto start_pq_f = std::chrono::high_resolution_clock::now();
+    std::vector<int>encoded_data = runLengthdecode_freq(data_int);
+    auto stop_pq_f = std::chrono::high_resolution_clock::now();
+    auto duration_pq_f = std::chrono::duration_cast<std::chrono::nanoseconds>(stop_pq_f - start_pq_f);
+    unsigned long long point_query_time_f = duration_pq_f.count();
+    std::cout << "Time taken to perform to decode runLengthEncode = " << point_query_time_f << " nanoseconds" << endl;
 
-    std::ofstream output_file("./RunLengthEncoding/decoded_data_rle_100k.txt");
+    std::ofstream output_file("./decoded_data.txt");
+
     std::ostream_iterator<int> output_iterator(output_file, "\n");
     std::copy(std::begin(encoded_data), std::end(encoded_data), output_iterator);
     output_file.close();
-
-    std::cout << "Decoding took " << elapsed_time << " microseconds." << std::endl; // print elapsed time in microseconds
     return 0;
 }
