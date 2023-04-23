@@ -25,5 +25,5 @@ int main() {
     // Print duration
     std::cout << "Encoding took " << duration.count() << " nanoseconds." << std::endl;
 
-    return 0;
+    return 0; 
 }

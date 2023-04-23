@@ -23,6 +23,8 @@ def workload_generator(n, k, l):
 
     # k is number of out of order entries
     # l is max displacement of out of order entries
+    k = int((k * n)/100)
+    l = int((l * n)/100)
 
     while k != 0:
         index = random.randint(0, n - 1)
@@ -49,4 +51,4 @@ def workload_generator(n, k, l):
         for item in data:
             f.write("%s\n" % item)
 
-workload_generator(200, 8, 5)
+workload_generator(200, 100, 1)

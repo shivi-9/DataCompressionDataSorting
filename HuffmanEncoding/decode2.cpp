@@ -91,7 +91,7 @@ Node* buildHuffmanTree(const map<int, double>& freqMap) {
     while (pq.size() > 1) {
         Node* left = pq.top(); pq.pop(); 
         cout << "Tree" << endl;
-        cout << left->value << endl;
+        cout << left->value << endl; 
         Node* right = pq.top(); pq.pop();
         cout << right->value << endl;
         Node* parent = new Node(-1, left->frequency + right->frequency);
