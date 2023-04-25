@@ -24,7 +24,7 @@ std::vector<int> delta_decoding(std::vector<int> arr){
 }
 
 int main(){
-    ifstream infile("./Delta_Encoding/EncodedData/4MB/100_100.txt", ios::binary);
+    ifstream infile("./Delta_Encoding/EncodedData/40KB/100_100.txt", ios::binary);
     std::vector<int> data;
     
     int element;
@@ -46,7 +46,7 @@ int main(){
     auto elapsed_time = std::chrono::duration_cast<std::chrono::nanoseconds>(end_time - start_time).count();
     std::cout << "Decoding time: " << elapsed_time << " nanoseconds" << std::endl;
 
-    std::ofstream output_file("./Delta_Encoding/DecodedData/4MB/100_100.txt", ios::binary);
+    std::ofstream output_file("./Delta_Encoding/DecodedData/40KB/100_100.txt", ios::binary);
 
 
     std::ostream_iterator<int> output_iterator(output_file, "\n");

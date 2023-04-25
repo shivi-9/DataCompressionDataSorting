@@ -101,11 +101,11 @@ def workload_generator(n, k, l):
         # print(k)
         k -= 1
 
-    with open('./Workload/Workload40KB/100_100.txt', 'w') as f:
+    with open('./Workload/Workload40KB/100_1.txt', 'w') as f:
         for item in data:
             f.write("%s\n" % item)
 
-workload_generator(8192, 100, 100)
+workload_generator(8192, 100, 1)
 
 # import random
 # import tqdm
