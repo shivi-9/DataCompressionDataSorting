@@ -22,9 +22,9 @@ int get_file_size(std::string filename) // path to file
 
 int main(){
 
-    int file1 = get_file_size("./encoded_data.txt");
-    int file2 = get_file_size("./workload.txt");
+    int file1 = get_file_size("./RunLengthEncoding/EncodedData/4MB/100_100.txt");
+    int file2 = get_file_size("./Workload/Workload4MB/100_100.txt");
     float compression_ratio = (file1 * 1.0 / file2 * 1.0) * 100;
-    std::cout<<"Compresssion ratio is - "<<compression_ratio <<"%";
+    std::cout<<"Compresssion ratio is - "<<compression_ratio <<"%"<<endl;
 
 }

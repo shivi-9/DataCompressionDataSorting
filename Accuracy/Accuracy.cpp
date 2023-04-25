@@ -23,7 +23,7 @@ double calculateAccuracy(const string& originalFile, const string& decodedFile) 
 }
 
 int main() {
-    double accuracy = calculateAccuracy("./Workload/workload.txt", "./LZ77/decoded.txt");
+    double accuracy = calculateAccuracy("./Workload/Workload4MB/100_100.txt", "./RunLengthEncoding/DecodedData/4MB/100_100.txt");
     cout << "Accuracy: " << accuracy << "%" << endl;
     return 0;
 }

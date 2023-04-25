@@ -24,7 +24,7 @@ std::vector<int> delta_encoding(std::vector<int> arr){
 }
 
 int main(){
-    ifstream infile("./Workload/workload100k.txt", ios::binary);
+    ifstream infile("./Workload/Workload4MB/100_100.txt", ios::binary);
     std::vector<int> data;
     
     int element;
@@ -36,12 +36,12 @@ int main(){
     auto start_pq_f = std::chrono::high_resolution_clock::now();
     std::vector<int>encoded_data = delta_encoding(data);
     auto stop_pq_f = std::chrono::high_resolution_clock::now();
-    auto duration_pq_f = std::chrono::duration_cast<std::chrono::microseconds>(stop_pq_f - start_pq_f);
+    auto duration_pq_f = std::chrono::duration_cast<std::chrono::nanoseconds>(stop_pq_f - start_pq_f);
     unsigned long long point_query_time_f = duration_pq_f.count();
-    std::cout << "Time taken to perform Delta Encoding = " << point_query_time_f << " microseconds" << endl;
+    std::cout << "Time taken to perform Delta Encoding = " << point_query_time_f << " nanoseconds" << endl;
 
 
-    std::ofstream output_file("./Delta_Encoding/encoded_data_delta_100k.txt");
+    std::ofstream output_file("./Delta_Encoding/EncodedData/4MB/100_100.txt");
 
     // declare the output iterator before creating the ofstream object
     std::ostream_iterator<int> output_iterator(output_file, "\n");

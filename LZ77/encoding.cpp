@@ -86,14 +86,14 @@ void writeCompressedDataToFile(const vector<LZ77Token>& compressedData, const st
 
 int main() {
     // Read the workload file 
-    vector<int> data = read_data("./Workload/workload.txt");
+    vector<int> data = read_data("./Workload/Workload400KB/1_100.txt");
 
     auto start = std::chrono::high_resolution_clock::now();
     vector<unsigned char> bytes = convertIntegersToBytes(data);
     vector<LZ77Token> output = compressLZ77(bytes);
     auto end = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
-    writeCompressedDataToFile(output, "./LZ77/encoded.txt");
+    writeCompressedDataToFile(output, "./LZ77/EncodedData/400KB/1_100.txt");
     // Print duration
     std::cout << "Encoding took " << duration.count() << " nanoseconds." << std::endl;
     return 0;

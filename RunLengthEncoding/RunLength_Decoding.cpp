@@ -7,6 +7,7 @@
 #include <functional>
 #include <chrono>
 #include <utility>
+#include <iterator>
 #include <sstream>
 using namespace std;
 
@@ -26,7 +27,7 @@ std::vector<int> runLengthdecode_freq(std::vector<int> input) {
 }
 
 int main(){
-    ifstream infile("./encoded_data.txt", ios::binary);
+    ifstream infile("./RunLengthEncoding/EncodedData/4MB/100_100.txt", ios::binary);
     std::vector<string> data;
     std::vector<int> data_int;
     string element;
@@ -55,7 +56,7 @@ int main(){
     unsigned long long point_query_time_f = duration_pq_f.count();
     std::cout << "Time taken to perform to decode runLengthEncode = " << point_query_time_f << " nanoseconds" << endl;
 
-    std::ofstream output_file("./decoded_data.txt");
+    std::ofstream output_file("./RunLengthEncoding/DecodedData/4MB/100_100.txt");
 
     std::ostream_iterator<int> output_iterator(output_file, "\n");
     std::copy(std::begin(encoded_data), std::end(encoded_data), output_iterator);

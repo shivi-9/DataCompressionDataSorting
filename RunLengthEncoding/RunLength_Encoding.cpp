@@ -7,6 +7,7 @@
 #include <functional>
 #include <chrono>
 #include <utility>
+#include <iterator>
 
 using namespace std;
 
@@ -35,7 +36,7 @@ std::vector<int> runLengthEncode_freq(std::vector<int> input) {
 }
 
 int main(){
-    ifstream infile("./workload.txt", ios::binary);
+    ifstream infile("./Workload/Workload4MB/100_100.txt", ios::binary);
     std::vector<int> data;
     
     int element;
@@ -53,7 +54,7 @@ int main(){
 
    
 
-    std::ofstream output_file("./encoded_data.txt");
+    std::ofstream output_file("./RunLengthEncoding/EncodedData/4MB/100_100.txt");
 
     std::ostream_iterator<int> output_iterator(output_file, "\n");
     
