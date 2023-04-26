@@ -72,13 +72,13 @@ void writeDecompressedDataToFile(const string& filename, const vector<int>& data
 }
 
 int main() {
-    vector<LZ77Token> compressedData = readCompressedDataFromFile("./LZ77/EncodedData/40KB/100_100.txt");
+    vector<LZ77Token> compressedData = readCompressedDataFromFile("./LZ77/EncodedData/40KB/100_1.txt");
     auto start = std::chrono::high_resolution_clock::now();
     vector<unsigned char> bytes = decompressLZ77(compressedData);
     vector<int> integers = convertBytesToIntegers(bytes);
     auto end = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
-    writeDecompressedDataToFile("./LZ77/DecodedData/40KB/100_100.txt", integers);
+    writeDecompressedDataToFile("./LZ77/DecodedData/40KB/100_1.txt", integers);
     // Print duration
     std::cout << "Encoding took " << duration.count() << " nanoseconds." << std::endl;
     return 0;

@@ -79,6 +79,7 @@
         "utility": "cpp",
         "hash_map": "cpp",
         "list": "cpp",
-        "memory_resource": "cpp"
+        "memory_resource": "cpp",
+        "map": "cpp"
     }
 }

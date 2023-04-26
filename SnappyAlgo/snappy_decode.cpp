@@ -5,7 +5,7 @@
 
 int main() {
     // Read input from file
-    std::ifstream input("./SnappyAlgo/encoded.txt", std::ios::binary);
+    std::ifstream input("./SnappyAlgo/EncodedData/4MB/25_25.txt", std::ios::binary);
     std::string encoded((std::istreambuf_iterator<char>(input)),
                         std::istreambuf_iterator<char>());
     input.close();
@@ -18,7 +18,7 @@ int main() {
     auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
 
     // Save decoded data to file
-    std::ofstream output("./SnappyAlgo/decoded.txt", std::ios::binary);
+    std::ofstream output("./SnappyAlgo/DecodedData/4MB/25_25.txt", std::ios::binary);
     output.write(decoded.data(), decoded.size());
     output.close();
 

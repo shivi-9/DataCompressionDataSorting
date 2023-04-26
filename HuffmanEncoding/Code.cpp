@@ -114,7 +114,6 @@ void write_encoded_data(string encodedData, map<int, double> probability_map, st
     //     outfile << pair.first << " " << pair.second << endl;
     // }
     
-    outfile << "\nEnocoded Data\n";
     outfile << encodedData;
     outfile.close();
 }
@@ -152,7 +151,7 @@ void write_decoded_data(vector<int> decodedData, string path_file){
 
 int main() {
     // Read the workload file 
-    vector<int> data = read_data("./Workload/Workload40KB/100_1.txt");
+    vector<int> data = read_data("../Workload/Workload400KB/100_1.txt");
 
     auto start_ = std::chrono::high_resolution_clock::now();
 
@@ -173,12 +172,12 @@ int main() {
 
 
     // Write encoded data and prob map to a .txt file
-    write_encoded_data(encodedData, probability_map, "./HuffmanEncoding/encoded_data.txt");
+    write_encoded_data(encodedData, probability_map, "../HuffmanEncoding/EncodedData/400KB/100_1.txt");
 
     // Decode the encoded data
     vector<int> decodedData = decode(encodedData, root);
 
-    write_decoded_data(decodedData, "./HuffmanEncoding/decoded_data.txt");
+    write_decoded_data(decodedData, "../HuffmanEncoding/DecodedData/400KB/100_1.txt");
     
     return 0; 
 }
