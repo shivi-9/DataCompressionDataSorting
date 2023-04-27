@@ -10,7 +10,7 @@ using namespace std;
 const int WINDOW_SIZE = 2048;
 const int MAX_MATCH_LENGTH = 18;
 
-vector<int> read_data(string path){
+std::vector<int> read_data(string path){
     vector<int> data;
     ifstream inputFile(path);
     int num;
@@ -29,7 +29,7 @@ struct LZ77Token {
     unsigned char nextByte;
 };
 
-vector<unsigned char> convertIntegersToBytes(const vector<int>& integers) {
+std::vector<unsigned char> convertIntegersToBytes(const vector<int>& integers) {
     vector<unsigned char> bytes;
     for (int i = 0; i < integers.size(); i++) {
         int n = integers[i];
@@ -41,7 +41,7 @@ vector<unsigned char> convertIntegersToBytes(const vector<int>& integers) {
     return bytes;
 }
 
-vector<LZ77Token> compressLZ77(const vector<unsigned char>& input) {
+std::vector<LZ77Token> compressLZ77(const vector<unsigned char>& input) {
     vector<LZ77Token> output;
     int inputLength = input.size();
     int pos = 0;
@@ -108,15 +108,16 @@ void writeCompressedDataToFile(const vector<LZ77Token>& compressedData, const st
 
 int main() {
     // Read the workload file 
-    vector<int> data = read_data("./Workload/Workload40KB/50_1.txt");
+    std::vector<int> data = read_data("./Workload/Workload4MB/50_1.txt");
 
     auto start = std::chrono::high_resolution_clock::now();
-    vector<unsigned char> bytes = convertIntegersToBytes(data);
-    vector<LZ77Token> output = compressLZ77(bytes);
+    std::vector<unsigned char> bytes = convertIntegersToBytes(data);
+    std::vector<LZ77Token> output = compressLZ77(bytes);
     auto end = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
-    writeCompressedDataToFile(output, "./LZ77/EncodedData/40KB/50_1.txt");
+    writeCompressedDataToFile(output, "./LZ77/EncodedData/4MB/50_1.txt");
     // Print duration
+
     std::cout << "Encoding took " << duration.count() << " nanoseconds." << std::endl;
     return 0;
 }
