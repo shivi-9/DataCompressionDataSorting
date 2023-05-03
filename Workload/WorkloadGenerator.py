@@ -42,11 +42,11 @@ def workload_generator(n, k, l):
             new_index = len(data) - 1
         
         data.insert(new_index, temp)
-        # print(k)
+        print(k)
         k -= 1
 
-    with open('./Workload/100_1.txt', 'w') as f:
+    with open('./Workload/Workload10MB/100_100.txt', 'w') as f:
         for item in data:
             f.write("%s\n" % item)
 
-workload_generator(100, 100, 1)
+workload_generator(2097152, 100, 100)

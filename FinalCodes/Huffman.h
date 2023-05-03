@@ -33,7 +33,6 @@ map<int, string> generateCodes(Node* root);
 string encode(const vector<int>& data, const map<int, string>& codes);
 void write_encoded_data(string encodedData, string path_file);
 vector<int> decode(string encodedData, Node* root);
-
-
+void huffman(string workload_path, string encoded_path);
 
 #endif

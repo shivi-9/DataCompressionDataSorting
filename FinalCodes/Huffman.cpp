@@ -13,7 +13,7 @@ using namespace std;
 
 map<int, double> get_probabilities(vector<int> data){
     map<int, double> probability_map;
-    int total_size = data.size();
+    int total_size = data.size(); 
 
     // sort the data
     sort(data.begin(), data.end());
@@ -112,37 +112,30 @@ vector<int> decode(string encodedData, Node* root) {
 
 void huffman(string workload_path, string encoded_path){
     // Read the workload file 
-    vector<int> data = read_data("./Workload/Workload4MB/25_25.txt");
+    vector<int> workload = read_data(workload_path);
 
+    // Encoding
     auto start_ = std::chrono::high_resolution_clock::now();
-
-    // Get the probabilities of each element
-    map<int, double> probability_map = get_probabilities(data);
-
-    // Build Huffman tree and generate prefix codes
+    map<int, double> probability_map = get_probabilities(workload);
     Node* root = buildHuffmanTree(probability_map);
     map<int, string> codes = generateCodes(root);
-
-    // for (const auto& p : probability_map) {
-    //     cout << p.first << " : " << p.second<<endl;
-    // }
-
-    // Encode the data using the prefix codes
-    string encodedData = encode(data, codes);
-
+    string encodedData = encode(workload, codes);
     auto stop_ = std::chrono::high_resolution_clock::now();
+    
+    // printing encoding time
     auto duration_ = std::chrono::duration_cast<std::chrono::nanoseconds>(stop_ - start_);
     unsigned long long time_taken = duration_.count();
     std::cout << "Time taken = " << time_taken << " nanoseconds" << endl;
 
-
     // Write encoded data and prob map to a .txt file
-    write_encoded_data(encodedData, "./HuffmanEncoding/EncodedData/4MB/25_25.txt");
+    write_encoded_data(encodedData, encoded_path);
 
     // Decode the encoded data
     vector<int> decodedData = decode(encodedData, root);
 
-    write_decoded_data(decodedData, "./HuffmanEncoding/DecodedData/4MB/25_25.txt");
-    
-    return 0; 
+    // accuracy
+    calculateAccuracy(workload, decodedData);
+
+    // compression ratio
+    compression_ratio(workload_path, encoded_path);
 }
