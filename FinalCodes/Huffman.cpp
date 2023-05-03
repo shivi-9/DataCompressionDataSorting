@@ -85,7 +85,7 @@ void write_encoded_data(string encodedData, string path_file){
     int numBytes = encodedData.size() / 8;
     string result(numBytes, '\0');
     for (int i = 0; i < numBytes; i++) {
-        std::bitset<8> bits(encodedData.substr(i * 8, 8));
+        bitset<8> bits(encodedData.substr(i * 8, 8));
         result[i] = static_cast<char>(bits.to_ulong());
     }
     
@@ -115,12 +115,12 @@ void huffman(string workload_path, string encoded_path){
     vector<int> workload = read_data(workload_path);
 
     // Encoding
-    auto start_ = std::chrono::high_resolution_clock::now();
+    auto start_ = chrono::high_resolution_clock::now();
     map<int, double> probability_map = get_probabilities(workload);
     Node* root = buildHuffmanTree(probability_map);
     map<int, string> codes = generateCodes(root);
     string encodedData = encode(workload, codes);
-    auto stop_ = std::chrono::high_resolution_clock::now();
+    auto stop_ = chrono::high_resolution_clock::now();
     
     // printing encoding time
     auto duration_ = std::chrono::duration_cast<std::chrono::nanoseconds>(stop_ - start_);

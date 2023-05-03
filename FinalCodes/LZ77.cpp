@@ -24,7 +24,7 @@ vector<unsigned char> convertIntegersToBytes(vector<int> integers) {
     return bytes;
 }
 
-vector<LZ77Token> encode(vector<unsigned char> input) {
+vector<LZ77Token> encode_lz77(vector<unsigned char> input) {
     vector<LZ77Token> output;
     int inputLength = input.size();
     int pos = 0;
@@ -120,7 +120,7 @@ void lz77(string workload_path, string encoded_path) {
     // Encoding
     auto start = std::chrono::high_resolution_clock::now();
     vector<unsigned char> bytes = convertIntegersToBytes(data);
-    vector<LZ77Token> output = encode(bytes);
+    vector<LZ77Token> output = encode_lz77(bytes);
     auto end = std::chrono::high_resolution_clock::now();
 
     // printting the encoding time
@@ -131,8 +131,8 @@ void lz77(string workload_path, string encoded_path) {
     write_encoded_data(output, encoded_path);
 
     // decoding
-    vector<unsigned char> bytes = decode(output);
-    vector<int> integers = convertBytesToIntegers(bytes);
+    vector<unsigned char> bytes1 = decode(output);
+    vector<int> integers = convertBytesToIntegers(bytes1);
     
     // accuracy
     calculateAccuracy(data, integers);
