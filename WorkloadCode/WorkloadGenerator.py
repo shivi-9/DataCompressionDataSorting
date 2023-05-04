@@ -1,8 +1,8 @@
 import random
 
 def workload_generator(n, k, l):
-    unique = int(n * 0.1)
-    duplicate = int(n * 0.9)
+    unique = int(n * 0.75)
+    duplicate = int(n * 0.25)
     max_freq = int(duplicate/unique)
     data = []
     
@@ -11,7 +11,7 @@ def workload_generator(n, k, l):
 
     for i in range((n - unique) + 1):
         num = random.randint(0, unique - 1)
-        freq = random.randint(1, max_freq - 1)
+        freq = random.randint(1, duplicate)
         data.extend([num] * freq)
         
         if(len(data) >= n):
@@ -42,11 +42,11 @@ def workload_generator(n, k, l):
             new_index = len(data) - 1
         
         data.insert(new_index, temp)
-        print(k)
+        # print(k)
         k -= 1
 
-    with open('./Workload/Workload10MB/100_100.txt', 'w') as f:
+    with open('./Workload-75%/1_1.txt', 'w') as f:
         for item in data:
             f.write("%s\n" % item)
 
-workload_generator(2097152, 100, 100)
+workload_generator(20480, 1, 1)
