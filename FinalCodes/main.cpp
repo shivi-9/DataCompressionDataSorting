@@ -4,22 +4,23 @@
 #include "RLE.h"
 // #include "Snappy.h"
 #include <iostream>
+#include <cstring>
 
 int main(int argc, char *argv[]){
-    if(argv[2] == "1"){
-        delta(argv[0], argv[1]);
+    if(strcmp(argv[3], "1") == 0){
+        delta(argv[1], argv[2]);
     }
-    else if(argv[2] == "2"){
-        huffman(argv[0], argv[1]);
+    else if(strcmp(argv[3], "2") == 0){
+        huffman(argv[1], argv[2]);
     }
-    else if(argv[2] == "3"){
-        lz77(argv[0], argv[1]);
+    else if(strcmp(argv[3], "3") == 0){
+        lz77(argv[1], argv[2]);
     }
-    else if(argv[2] == "4"){
-        rle(argv[0], argv[1]);
+    else if(strcmp(argv[3], "4") == 0){
+        rle(argv[1], argv[2]);
     }
-    // else if(argv[2] == "5"){
-    //     snappy(argv[0], argv[1]);
+    // else if(strcmp(argv[3], "5") == 0){
+    //     snappy(argv[1], argv[2]);
     // }
     else {
         cout << "Invalid Input" << endl;
