@@ -16,6 +16,7 @@ using namespace std;
 vector<int> delta_encoding(vector<int> arr){
     int temp1 = arr[0];
     int n = arr.size();
+    
     for(int i=1;i<n;i++){
        int temp2 = arr[i]; 
        arr[i] -= temp1;
@@ -37,7 +38,7 @@ vector<int> delta_decoding(vector<int> arr){
 void delta(string workload_path, string encoded_path){
     // reading the workload
     vector<int> workload = read_data(workload_path);
-
+    
     // Encoding
     auto start_pq_f = std::chrono::high_resolution_clock::now();
     vector<int>encoded_data = delta_encoding(workload);
