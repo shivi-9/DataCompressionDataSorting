@@ -18,10 +18,15 @@ vector<int> runLengthEncode_freq(vector<int> input) {
     int currentValue = input[0];
     vector<int> output;
 
+    // Loop through the input vector starting from the second element
     for (int i = 1; i < input.size(); i++) {
+        // If the current element is the same as the previous element, increment the count
         if (input[i] == currentValue) {
             count++;
-        } else {
+        } 
+        // Otherwise, add the previous value and its count to the output vector
+        // Reset the count to 1 and update the current value to the current element
+        else {
             output.push_back(currentValue);
             output.push_back(count);
             count = 1;
@@ -29,7 +34,7 @@ vector<int> runLengthEncode_freq(vector<int> input) {
         }
     }
 
-    // Add the last integer sequence
+    // Add the last integer sequence to the output vector
     output.push_back(currentValue);
     output.push_back(count);
 
@@ -38,13 +43,17 @@ vector<int> runLengthEncode_freq(vector<int> input) {
 
 vector<int> runLengthdecode_freq(vector<int> input) {
     vector<int> output;
+    // iterate through the input vector
     for (int i = 0; i < input.size(); i=i+2) {
-        int size = input[i+1]; 
+        // get the size of the sequence
+        int size = input[i+1];
+        // get the value that should be repeated
         int value = input[i];
+        // repeat the value size times and add to the output vector
         for (int j = 0; j < size; j++) {
             output.push_back(value) ;
         }
-    }
+        }
     return output;
 }
 

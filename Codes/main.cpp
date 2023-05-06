@@ -2,7 +2,7 @@
 #include "Huffman.h"
 #include "LZ77.h"
 #include "RLE.h"
-// #include "Snappy.h"
+#include "Snappy.h"
 #include <iostream>
 #include <cstring>
 
@@ -19,9 +19,9 @@ int main(int argc, char *argv[]){
     else if(strcmp(argv[3], "4") == 0){
         rle(argv[1], argv[2]);
     }
-    // else if(strcmp(argv[3], "5") == 0){
-    //     snappy(argv[1], argv[2]);
-    // }
+    else if(strcmp(argv[3], "5") == 0){
+        snappy(argv[1], argv[2]);
+    }
     else {
         cout << "Invalid Input" << endl;
     }

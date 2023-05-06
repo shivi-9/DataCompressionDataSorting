@@ -1,10 +1,10 @@
 CC=g++
 CFLAGS=-c -Wall
-LDFLAGS=
-SOURCES=main.cpp Helper.cpp Delta.cpp Huffman.cpp LZ77.cpp RLE.cpp
+LDFLAGS=-lsnappy
+SOURCES=main.cpp Snappy.cpp Helper.cpp Delta.cpp Huffman.cpp LZ77.cpp RLE.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=main
-ARGS=/home/grad1/shivi09/DataCompressionDataSorting/Workload-10%/Workload40KB/0_0.txt /home/grad1/shivi09/DataCompressionDataSorting/output.txt 4 
+ARGS=<path to the workload> <path where you want to save the encoded file> <choice of encoding algorithm> 
 
 all: $(SOURCES) $(EXECUTABLE) run
 

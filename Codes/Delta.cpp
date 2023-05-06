@@ -13,6 +13,15 @@
 
 using namespace std;
 
+/* This function takes in a vector of integers 'arr' and performs delta encoding on it.
+   Delta encoding is a lossless data compression technique that stores the difference 
+   between successive values in a sequence. The first element of the sequence is stored
+   as it is, and the difference between the subsequent elements and their previous elements 
+   is stored instead of the actual values. This function uses two temporary variables, 
+   'temp1' and 'temp2', to keep track of the previous and current elements in the sequence
+   respectively. The loop starts from the second element of the vector and subtracts the 
+   previous element from the current element, and then updates 'temp1' and 'temp2'.
+   The resulting vector 'arr' is the delta-encoded version of the original input vector */
 vector<int> delta_encoding(vector<int> arr){
     int temp1 = arr[0];
     int n = arr.size();
@@ -25,6 +34,15 @@ vector<int> delta_encoding(vector<int> arr){
     return arr;
 }
 
+/* This function takes in a vector of integers 'arr' and performs delta decoding on it.
+   Delta decoding is the reverse process of delta encoding and reconstructs the original 
+   sequence from the delta-encoded version. The first element of the sequence is stored 
+   as it is, and the subsequent elements are obtained by adding the corresponding delta 
+   values to the previous elements. This function uses two temporary variables, 'temp1' 
+   and 'temp2', to keep track of the previous and current elements in the sequence respectively.
+   The loop starts from the second element of the vector and adds the previous element to 
+   the current delta value, and then updates 'temp1' and 'temp2'. The resulting vector 'arr' 
+   is the delta-decoded version of the original input vector. */
 vector<int> delta_decoding(vector<int> arr){
     int temp1 = arr[0];
     int n = arr.size();

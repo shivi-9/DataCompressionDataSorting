@@ -16,10 +16,11 @@ vector<unsigned char> convertIntegersToBytes(vector<int> integers) {
     vector<unsigned char> bytes;
     for (int i = 0; i < integers.size(); i++) {
         int n = integers[i];
-        bytes.push_back((n >> 24) & 0xFF);
-        bytes.push_back((n >> 16) & 0xFF);
-        bytes.push_back((n >> 8) & 0xFF);
-        bytes.push_back(n & 0xFF);
+        // convert 4 bytes integer into 4 unsigned char bytes 
+        bytes.push_back((n >> 24) & 0xFF); // extract the first byte of the integer and push it into the bytes vector
+        bytes.push_back((n >> 16) & 0xFF); // extract the second byte of the integer and push it into the bytes vector
+        bytes.push_back((n >> 8) & 0xFF); // extract the third byte of the integer and push it into the bytes vector
+        bytes.push_back(n & 0xFF); // extract the fourth byte of the integer and push it into the bytes vector
     }
     return bytes;
 }
@@ -79,18 +80,26 @@ void write_encoded_data(vector<LZ77Token> compressedData, string filename) {
         cerr << "Failed to open file " << filename << endl;
         return;
     }
+    // Write each token to the file as a comma-separated string
     for (int i = 0; i < compressedData.size(); i++) {
+        // Convert integer values to strings
         string temp_offset = to_string(compressedData[i].offset);
         string temp_len = to_string(compressedData[i].length);
         string temp_byte = to_string((int)compressedData[i].nextByte);
+        // Concatenate strings into a single line
         string temp = temp_offset + ", " + temp_len + "," + temp_byte + "\n";
+        // Write the line to the file
         outFile << compressedData[i].offset << "," << compressedData[i].length << "," << (int)compressedData[i].nextByte << endl;
     }
+    // Close the file
     outFile.close();
 }
 
+
+// Converts a vector of bytes to a vector of integers
 vector<int> convertBytesToIntegers(vector<unsigned char> bytes) {
     vector<int> integers;
+    // Loops through every 4 bytes and converts them to an integer
     for (int i = 0; i < bytes.size(); i += 4) {
         int n = (bytes[i] << 24) | (bytes[i+1] << 16) | (bytes[i+2] << 8) | bytes[i+3];
         integers.push_back(n);
@@ -99,18 +108,18 @@ vector<int> convertBytesToIntegers(vector<unsigned char> bytes) {
 }
 
 vector<unsigned char> decode(vector<LZ77Token> input) {
-    vector<unsigned char> output;
-    for (int i = 0; i < input.size(); i++) {
-        if (input[i].length > 0) {
-            int start = output.size() - input[i].offset;
-            int end = start + input[i].length;
-            for (int j = start; j < end; j++) {
+    vector<unsigned char> output; // initialize an empty output vector
+    for (int i = 0; i < input.size(); i++) { // iterate over all the LZ77 tokens in the input vector
+        if (input[i].length > 0) { // check if the token represents a sequence of previously encoded bytes
+            int start = output.size() - input[i].offset; // calculate the start index of the sequence in the output vector
+            int end = start + input[i].length; // calculate the end index of the sequence in the output vector
+            for (int j = start; j < end; j++) { // iterate over the sequence in the output vector and copy it to the end of the output vector
                 output.push_back(output[j]);
             }
         }
-        output.push_back(input[i].nextByte);
+        output.push_back(input[i].nextByte); // append the next byte to the end of the output vector
     }
-    return output; 
+    return output; // return the decoded output vector
 }
 
 void lz77(string workload_path, string encoded_path) {
